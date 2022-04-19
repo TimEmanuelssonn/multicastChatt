@@ -25,8 +25,9 @@ class Main extends JFrame implements ActionListener {
     JPanel chatPanel = new JPanel();
     JPanel chatInputPanel = new JPanel();
     JTextArea chat = new JTextArea(20,40);
+
     //Try get scroll to work.
-    JScrollPane scroll = new JScrollPane(chat,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    JScrollPane scroll = new JScrollPane(chat, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     JTextField chatInput = new JTextField(40);
     JButton connectButton = new JButton("Connect to chat");
 
@@ -104,6 +105,10 @@ class Main extends JFrame implements ActionListener {
                     e.printStackTrace();
                 }
             } else {
+                //Send message "Disconnected" to chat and set connected to false.
+                sendMessage("Disconnected");
+                connected = false;
+
                 //Interrupt thread.
                 t.interrupt();
 
@@ -111,22 +116,16 @@ class Main extends JFrame implements ActionListener {
                 connectButton.setText("Connect to chat");
                 chatInput.setEditable(false);
 
-                //Send message "Disconnected" to chat and set connected to false.
-                sendMessage("Disconnected");
-                connected = false;
+                
             }
-
-            
         }
 
         if(ae.getSource() == chatInput) {
             //Get input from chatinput and send it to sendMessage.
             message = chatInput.getText();
             sendMessage(message);
-
         }
     }
-
     
     public void sendMessage(String message) {
         dataToSend = userNameInput + ": " + message;

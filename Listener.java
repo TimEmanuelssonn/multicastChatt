@@ -9,6 +9,7 @@ import javax.swing.JTextArea;
 
 public class Listener implements Runnable  {
 
+    int i;
     String storedChat;
     MulticastSocket socket;
     JTextArea chat;
@@ -21,17 +22,17 @@ public class Listener implements Runnable  {
     public Listener(MulticastSocket socket, JTextArea chat) throws SocketException, IOException {
         this.socket = socket;
         this.chat = chat;
+
+        //Create new multicastsocket and join group.
+        this.socket = new MulticastSocket(port);
+        this.socket.joinGroup(group, netIf);
     }
 
     public void run() {
         //Run while thread is not intrrupted
         while (!Thread.interrupted()) {
             try {
-                //Create new multicastsocket and join group.
-                socket = new MulticastSocket(port);
-                socket.joinGroup(group, netIf);
                 byte[] data = new byte[256];
-
                 DatagramPacket packet = new DatagramPacket(data, data.length);
                 //Wait until we receive data.
                 socket.receive(packet);
@@ -39,14 +40,11 @@ public class Listener implements Runnable  {
                 //Get data from packet to string
                 String message = new String(packet.getData(), 0, packet.getLength());
 
-                //Check if user disconnect or connect. We don't want to send the stored chat when connect/disconnect.
-                if(message == "Disconnected" || message == "Connected") {
-                    chat.setText(message + "\n");
-                } else {
-                    //Get stored chat by getText and change chat to storedchat + new message.
-                    storedChat = chat.getText();
-                    chat.setText(storedChat + message + "\n");
-                }
+                //Get stored chat by getText and change chat to storedchat + new message.
+                storedChat = chat.getText();
+                chat.setText(storedChat + message + "\n");
+                i++;
+                System.out.println("Hej: " +  i);
             } catch (IOException e) {
                 break;
             }
