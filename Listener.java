@@ -9,6 +9,7 @@ import javax.swing.JTextArea;
 
 public class Listener implements Runnable  {
 
+    String storedChat;
     MulticastSocket socket;
     JTextArea chat;
     String ip = "234.235.236.237";
@@ -23,23 +24,24 @@ public class Listener implements Runnable  {
     }
 
     public void run() {
-        System.out.println("in run");
         while (!Thread.interrupted()) {
             try {
                 socket = new MulticastSocket(port);
                 socket.joinGroup(group, netIf);
                 byte[] data = new byte[256];
-                System.out.println("in run 2");
 
                 DatagramPacket packet = new DatagramPacket(data, data.length);
                 socket.receive(packet);
                 String message = new String(packet.getData(), 0, packet.getLength());
-                chat.setText(message);
+                if(message == "Disconnected" || message == "Connected") {
+                    chat.setText(message + "\n");
+                } else {
+                    storedChat = chat.getText();
+                    chat.setText(storedChat + message + "\n");
+                }
             } catch (IOException e) {
                 break;
             }
         }
     }
-
-
 }
