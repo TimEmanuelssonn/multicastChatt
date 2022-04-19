@@ -25,6 +25,7 @@ class Main extends JFrame implements ActionListener {
     JPanel chatPanel = new JPanel();
     JPanel chatInputPanel = new JPanel();
     JTextArea chat = new JTextArea(20,40);
+    //Try get scroll to work.
     JScrollPane scroll = new JScrollPane(chat,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     JTextField chatInput = new JTextField(40);
     JButton connectButton = new JButton("Connect to chat");
@@ -73,6 +74,7 @@ class Main extends JFrame implements ActionListener {
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+        //Create new multicastsocket and joingroup.
         socket = new MulticastSocket();
         socket.joinGroup(group, netIf);
     }
@@ -82,26 +84,34 @@ class Main extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent ae) {
+        //If user press connect button
         if(ae.getSource() == connectButton) {
-            //Here connect user to chat/disconnect
-            //Change text for button
-
             if(!connected) {
                 try {
+                    //Create new listener, thread and start tread with listner class.
                     Listener li = new Listener(socket, chat);
                     t = new Thread(li);
                     t.start();
+                    
+                    //Change text on connect button and activate chatinput.
                     connectButton.setText("Disconnet");
                     chatInput.setEditable(true);
+                    
+                    //Send message "Connected" to chat and set connected to true.
                     sendMessage("Connected");
                     connected = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
+                //Interrupt thread.
                 t.interrupt();
+
+                //Change text on connect button to connect to chat and set chatinput to false.
                 connectButton.setText("Connect to chat");
                 chatInput.setEditable(false);
+
+                //Send message "Disconnected" to chat and set connected to false.
                 sendMessage("Disconnected");
                 connected = false;
             }
@@ -110,22 +120,25 @@ class Main extends JFrame implements ActionListener {
         }
 
         if(ae.getSource() == chatInput) {
-            //Here we want to send message to chat.
+            //Get input from chatinput and send it to sendMessage.
             message = chatInput.getText();
             sendMessage(message);
 
         }
     }
 
+    
     public void sendMessage(String message) {
-            dataToSend = userNameInput + ": " + message;
-            byte[] data = dataToSend.getBytes();
-            DatagramPacket packet = new DatagramPacket(data, data.length, iadr, port);
-            try {
-                socket.send(packet);
-                chatInput.setText("");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        dataToSend = userNameInput + ": " + message;
+        //Convert string to byte.
+        byte[] data = dataToSend.getBytes();
+        DatagramPacket packet = new DatagramPacket(data, data.length, iadr, port);
+        try {
+            //Send packet and set chatinput to blank.
+            socket.send(packet);
+            chatInput.setText("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

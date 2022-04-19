@@ -24,18 +24,26 @@ public class Listener implements Runnable  {
     }
 
     public void run() {
+        //Run while thread is not intrrupted
         while (!Thread.interrupted()) {
             try {
+                //Create new multicastsocket and join group.
                 socket = new MulticastSocket(port);
                 socket.joinGroup(group, netIf);
                 byte[] data = new byte[256];
 
                 DatagramPacket packet = new DatagramPacket(data, data.length);
+                //Wait until we receive data.
                 socket.receive(packet);
+
+                //Get data from packet to string
                 String message = new String(packet.getData(), 0, packet.getLength());
+
+                //Check if user disconnect or connect. We don't want to send the stored chat when connect/disconnect.
                 if(message == "Disconnected" || message == "Connected") {
                     chat.setText(message + "\n");
                 } else {
+                    //Get stored chat by getText and change chat to storedchat + new message.
                     storedChat = chat.getText();
                     chat.setText(storedChat + message + "\n");
                 }
