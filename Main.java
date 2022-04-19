@@ -6,6 +6,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.MulticastSocket;
 import java.awt.*;
 
 class Main extends JFrame implements ActionListener {
@@ -18,6 +20,8 @@ class Main extends JFrame implements ActionListener {
     JTextField chatInput = new JTextField(40);
     JButton connectButton = new JButton("Connect to chat");
     String userNameInput;
+
+    MulticastSocket socket;
 
     public Main() {
 
@@ -55,6 +59,15 @@ class Main extends JFrame implements ActionListener {
         if(ae.getSource() == connectButton) {
             //Here connect user to chat/disconnect
             //Change text for button
+
+            try {
+                Listener li = new Listener(socket, chat);
+                Thread t = new Thread(li);
+                t.start();
+                connectButton.setText("Disconnet");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         if(ae.getSource() == chatInput) {
