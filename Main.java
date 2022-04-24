@@ -115,8 +115,6 @@ class Main extends JFrame implements ActionListener {
                 //Change text on connect button to connect to chat and set chatinput to false.
                 connectButton.setText("Connect to chat");
                 chatInput.setEditable(false);
-
-                
             }
         }
 

@@ -7,9 +7,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import javax.swing.JTextArea;
 
-public class Listener implements Runnable  {
+public class Listener implements Runnable {
 
-    int i;
     String storedChat;
     MulticastSocket socket;
     JTextArea chat;
@@ -43,8 +42,6 @@ public class Listener implements Runnable  {
                 //Get stored chat by getText and change chat to storedchat + new message.
                 storedChat = chat.getText();
                 chat.setText(storedChat + message + "\n");
-                i++;
-                System.out.println("Hej: " +  i);
             } catch (IOException e) {
                 break;
             }
